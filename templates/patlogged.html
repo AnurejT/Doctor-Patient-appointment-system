@@ -1,1 +1,95 @@
-<h1>Patient Logged</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Dashboard</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        header {
+            text-align: center;
+            background-color: #f0f0f0;
+            padding: 20px 0;
+        }
+
+        .main-container {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px;
+        }
+
+        .form-container {
+            width: 45%;
+        }
+
+        .table-container {
+            width: 50%;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table, th, td {
+            border: 1px solid black;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Welcome to the Appointment System</h1>
+    </header>
+
+    <div class="main-container">
+        <div class="form-container">
+            <h2>Schedule an appointment with a doctor</h2>
+            <form action="" method="POST">
+                <h5>Choose the doctor</h5>
+                <select name="doctor" id="doctor">
+                    {% for doctor in approved_doctors %}
+                        <option value="{{ doctor.id }}">{{ doctor.full_name }} - {{ doctor.doct_id }} - {{ doctor.specialization }}</option>
+                    {% endfor %}
+                </select>
+                <h5>Select the date:</h5>
+                <input type="date" name="appointment_date"><br><br>
+                <button type="submit">Schedule</button>
+            </form>
+        </div>
+
+        <div class="table-container">
+            <h2>Scheduled Appointments</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Doctor ID</th>
+                        <th>Doctor Name</th>
+                        <th>Booked Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for doctor in approved_doctors %}
+                        <tr>
+                            <td>{{ doctor.doctor_id }}</td>
+                            <td>{{ doctor.doctor_name }}</td>
+                            <td>{{ doctor.date }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</body>
+</html>

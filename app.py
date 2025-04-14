@@ -90,7 +90,8 @@ def patient_logged():
     if 'patient_id' not in session:
         return redirect('/logpat')
 
-    return render_template('patlogged.html')
+    approved_doctors = Doctor.query.filter_by(is_approved = True).all()
+    return render_template('patlogged.html', approved_doctors = approved_doctors)
 
 @app.route('/logdoc', methods = ['GET', 'POST'])
 def log_doc():

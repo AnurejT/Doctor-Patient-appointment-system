@@ -61,6 +61,30 @@
 </head>
 <body>
     <div class="container dashboard-container">
+
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div id="flash-message" class="alert alert-success alert-dismissible fade show" role="alert">
+            {% for message in messages %}
+            <div>{{ message }}</div>
+            {% endfor %}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endif %}
+    {% endwith %}
+
+<script>
+    // Auto-dismiss after 2 seconds
+    setTimeout(function() {
+        const flash = document.getElementById('flash-message');
+        if (flash) {
+            flash.classList.remove('show'); // Trigger fade out
+            flash.classList.add('fade');    // Optional if needed
+        }
+    }, 2000);
+</script>
+
+
         <h1>Admin Approval Dashboard</h1>
 
         <!-- Patients Pending Approval -->
