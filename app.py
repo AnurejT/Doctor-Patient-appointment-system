@@ -89,9 +89,11 @@ def log_pat():
 def patient_logged():
     if 'patient_id' not in session:
         return redirect('/logpat')
-
+    
+    patient_id = session['patient_id']
     approved_doctors = Doctor.query.filter_by(is_approved = True).all()
-    return render_template('patlogged.html', approved_doctors = approved_doctors)
+    appointments = Appointment.query.filter_by(patient_id = patient_id ).all()
+    return render_template('patlogged.html', approved_doctors = approved_doctors, appointments = appointments)
 
 @app.route('/logdoc', methods = ['GET', 'POST'])
 def log_doc():

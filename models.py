@@ -29,6 +29,6 @@ class Appointment(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     patient_id = db.Column(db.Integer, db.ForeignKey('patient.id'))
     doctor_id = db.Column(db.Integer, db.ForeignKey('doctor.id'))
-    date = db.Column(db.Date)
+    appointment_date = db.Column(db.Date)
 
         
