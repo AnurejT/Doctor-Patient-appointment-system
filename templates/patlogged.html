@@ -55,9 +55,9 @@
     <div class="main-container">
         <div class="form-container">
             <h2>Schedule an appointment with a doctor</h2>
-            <form action="" method="POST">
+            <form action="/schedule_appointment" method="POST">
                 <h5>Choose the doctor</h5>
-                <select name="doctor" id="doctor">
+                <select name="doctor_id" id="doctor">
                     {% for doctor in approved_doctors %}
                         <option value="{{ doctor.id }}">{{ doctor.full_name }} - {{ doctor.doct_id }} - {{ doctor.specialization }}</option>
                     {% endfor %}

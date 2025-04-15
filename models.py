@@ -24,4 +24,11 @@ class Doctor(db.Model):
     specialization = db.Column(db.String())
     is_approved = db.Column(db.Boolean, default = False)
 
+class Appointment(db.Model):
+
+    id = db.Column(db.Integer, primary_key = True)
+    patient_id = db.Column(db.Integer, db.ForeignKey('patient.id'))
+    doctor_id = db.Column(db.Integer, db.ForeignKey('doctor.id'))
+    date = db.Column(db.Date)
+
         

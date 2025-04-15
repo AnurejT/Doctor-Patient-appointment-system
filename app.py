@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, session, redirect, flash
-from models import db, Patient, Doctor
+from models import db, Patient, Doctor, Appointment
 from datetime import datetime, date
 
 ADMIN_USERNAME = 'anurej'
@@ -186,6 +186,27 @@ def delete_doctor(doctor_id):
         flash(f"Doctor {doctor.full_name} deleted successfully.")
     return redirect('/adminlogged')
 
+@app.route('/schedule_appointment', methods=['POST'])
+def schedule_appointment():
+    if request.method == 'POST':
+        patient_id = session.get('patient_id')
+        doctor_id = request.form['doctor_id']
+        appointment_date_str = request.form['appointment_date']
+        appointment_date = datetime.strptime(appointment_date_str, '%Y-%m-%d').date()
+
+        patient = Patient.query.get(patient_id)
+        doctor = Doctor.query.get(doctor_id)
+
+        if patient and doctor:
+            appointment = Appointment(
+                patient_id=patient.id,
+                doctor_id=doctor.id,
+                appointment_date=appointment_date
+            )
+            db.session.add(appointment)
+            db.session.commit()
+            flash(f"Appointment scheduled with Dr. {doctor.full_name} on {appointment_date}.")
+            return redirect('/patlogged')
 
 if __name__ == '__main__':
     app.run(debug=True, port=5001)
