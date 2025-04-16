@@ -273,6 +273,15 @@ def schedule_appointment():
     
     return redirect('/patlogged')
 
+@app.route('/approve_appointment/<int:appointment_id>', methods = ['POST'])
+def approve_appointment(appointment_id):
+
+    appointment = Appointment.query.get(appointment_id)
+    if appointment.status == 'pending':
+        appointment.status = 'approved'
+        db.session.commit()
+        flash("Appointment approved successfully.")
+    return redirect('/doclogged')
 
 
 if __name__ == '__main__':

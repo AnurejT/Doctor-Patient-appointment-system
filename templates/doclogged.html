@@ -117,7 +117,7 @@
                     <td>{{ req.patient.full_name }}</td>
                     <td>{{ req.appointment_date }}</td>
                     <td>
-                        <form method="POST" action="/approve_appointment" style="display:inline;">
+                        <form method="POST" action="/approve_appointment/{{ req.id }}" style="display:inline;">
                             <input type="hidden" name="appointment_id" value="{{ req.id }}">
                             <button type="submit">Approve</button>
                         </form>
