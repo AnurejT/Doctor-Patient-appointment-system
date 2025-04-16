@@ -75,7 +75,7 @@
     <!-- Appointments Table -->
     <div class="table-container">
         <h2>Doctors and their scheduled appointments</h2>
-        {% if appointments %}
+        {% if fixed_appointments %}
         <table>
             <thead>
                 <tr>
@@ -85,7 +85,7 @@
                 </tr>
             </thead>
             <tbody>
-                {% for appointment in appointments %}
+                {% for appointment in fixed_appointments %}
                     <tr>
                         <td>{{ appointment.doctor.full_name }}</td>
                         <td>{{ appointment.doctor.specialization }}</td>

@@ -123,11 +123,12 @@ def patient_logged():
             'date': appt.appointment_date
         })
 
-
+    fixed_appointments = Appointment.query.filter_by(status = 'approved').all()
     return render_template(
         'patlogged.html',
         approved_doctors=unbooked_doctors,
-        appointment_details=appointment_details
+        appointment_details=appointment_details,
+        fixed_appointments = fixed_appointments
     )
 
 
