@@ -80,12 +80,20 @@ def log_pat():
 
         patient = Patient.query.filter_by(phone_no = phone).first()
 
-        if patient and patient.password == password:
-            session['patient_id'] = patient.id
-            return redirect('/patlogged')
-        
+        if patient:
+
+            if patient and patient.password == password:
+                if patient.is_approved == True:
+                    session['patient_id'] = patient.id
+                    return redirect('/patlogged')
+                else:
+                    return 'Your account is not approved yet by the admin. Please wait for admin approval.'
+            else:
+                flash('Invalid password')
+                return redirect('/logpat')
+                
         else:
-            return 'Invalid phone number or password'
+            return 'Invalid phone number'
         
 @app.route('/patlogged')
 def patient_logged():
@@ -136,12 +144,21 @@ def log_doc():
 
         doctor = Doctor.query.filter_by(doct_id = doc_id).first()
 
-        if doctor and doctor.password == password:
-            session['doctor_id'] = doctor.id
-            return redirect('/doclogged')
+        if doctor:
+
+            if doctor and doctor.password == password:
+                if doctor.is_approved == True:
+                    session['doctor_id'] = doctor.id
+                    return redirect('/doclogged')
+                else:
+                    return 'Your account is not approved yet by the admin. Please wait for admin approval.'
+            else:
+                flash('Invalid password')
+                return redirect('/logdoc')
         
         else:
-            return 'Invalid doctor id or password'
+            flash('Invalid doctor ID')
+            return redirect('/logdoc')      
         
 @app.route('/doclogged')
 def doctor_logged():
@@ -150,9 +167,9 @@ def doctor_logged():
     
     doctor_id = session['doctor_id']
     
-    appointment_requests = Patient.query.filter_by(status = 'pending', doctor_id = doctor_id).all()
+    appointment_requests = Appointment.query.filter_by(status = 'pending', doctor_id = doctor_id).all()
 
-    fixed_appointments = Patient.query.filter_by(status = 'approved', doctor_id = doctor_id).all()
+    fixed_appointments = Appointment.query.filter_by(status = 'approved', doctor_id = doctor_id).all()
 
     return render_template('doclogged.html', appointment_requests = appointment_requests, fixed_appointments = fixed_appointments)
 
@@ -245,13 +262,14 @@ def schedule_appointment():
 
     if patient and doctor:
         appointment = Appointment(
-            patient_id=patient.id,
-            doctor_id=doctor.id,
-            appointment_date=appointment_date
-        )
-        db.session.add(appointment)
-        db.session.commit()
-        flash(f"Appointment scheduled with Dr. {doctor.full_name} on {appointment_date}.")
+        patient_id=patient.id,
+        doctor_id=doctor.id,
+        appointment_date=appointment_date,
+        status='pending'  # ✅ This goes here
+    )
+    db.session.add(appointment)
+    db.session.commit()
+    flash(f"Appointment scheduled with Dr. {doctor.full_name} on {appointment_date}.")
     
     return redirect('/patlogged')
 

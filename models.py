@@ -13,6 +13,8 @@ class Patient(db.Model):
     password = db.Column(db.String())
     is_approved = db.Column(db.Boolean(), default = False)
 
+    appointments = db.relationship('Appointment', backref = 'patient')
+
 class Doctor(db.Model):
 
     id = db.Column(db.Integer, primary_key = True)
@@ -24,6 +26,8 @@ class Doctor(db.Model):
     doct_id = db.Column(db.String(), unique = True)
     specialization = db.Column(db.String())
     is_approved = db.Column(db.Boolean, default = False)
+
+    appointments = db.relationship('Appointment', backref='doctor')
 
 class Appointment(db.Model):
 
