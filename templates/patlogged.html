@@ -48,48 +48,57 @@
 </head>
 <body>
 
-    <header>
-        <h1>Welcome to the Appointment System</h1>
-    </header>
+<header>
+    <h1>Welcome to the Appointment System</h1>
+</header>
 
-    <div class="main-container">
-        <div class="form-container">
-            <h2>Schedule an appointment with a doctor</h2>
-            <form action="/schedule_appointment" method="POST">
-                <h5>Choose the doctor</h5>
-                <select name="doctor_id" id="doctor">
-                    {% for doctor in approved_doctors %}
-                        <option value="{{ doctor.id }}">{{ doctor.full_name }} - {{ doctor.doct_id }} - {{ doctor.specialization }}</option>
-                    {% endfor %}
-                </select>
-                <h5>Select the date:</h5>
-                <input type="date" name="appointment_date"><br><br>
-                <button type="submit">Schedule</button>
-            </form>
-        </div>
+<div class="main-container">
 
-        <div class="table-container">
-            <h2>Scheduled Appointments</h2>
-            <table>
-                <thead>
+    <!-- Appointment Form -->
+    <div class="form-container">
+        <h2>Schedule an appointment with a doctor</h2>
+        <form method="POST" action="/schedule_appointment">
+            <label for="doctor_id">Choose a doctor:</label><br>
+            <select name="doctor_id" id="doctor_id" required>
+                {% for doctor in approved_doctors %}
+                    <option value="{{ doctor.id }}">{{ doctor.id }} - {{ doctor.full_name }} ({{ doctor.specialization }})</option>
+                {% endfor %}
+            </select><br><br>
+
+            <label for="appointment_date">Choose the date:</label><br><br>
+            <input type="date" id="appointment_date" name="appointment_date" required><br><br>
+            
+            <button type="submit">Book Appointment</button>
+        </form>
+    </div> <!-- End of form-container -->
+
+    <!-- Appointments Table -->
+    <div class="table-container">
+        <h2>Doctors and their scheduled appointments</h2>
+        {% if appointments %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Doctor Name</th>
+                    <th>Specialization</th>
+                    <th>Appointment Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for appointment in appointments %}
                     <tr>
-                        <th>Doctor ID</th>
-                        <th>Doctor Name</th>
-                        <th>Booked Date</th>
+                        <td>{{ appointment.doctor.full_name }}</td>
+                        <td>{{ appointment.doctor.specialization }}</td>
+                        <td>{{ appointment.appointment_date }}</td>
                     </tr>
-                </thead>
-                <tbody>
-                    {% for doctor in approved_doctors %}
-                        <tr>
-                            <td>{{ doctor.doctor_id }}</td>
-                            <td>{{ doctor.doctor_name }}</td>
-                            <td>{{ doctor.date }}</td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+            <p>No appointments scheduled yet.</p>
+        {% endif %}
     </div>
+</div>
 
 </body>
 </html>

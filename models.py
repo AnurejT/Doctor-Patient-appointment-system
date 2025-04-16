@@ -1,5 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 
+
 db = SQLAlchemy()
 
 class Patient(db.Model):
@@ -30,5 +31,6 @@ class Appointment(db.Model):
     patient_id = db.Column(db.Integer, db.ForeignKey('patient.id'))
     doctor_id = db.Column(db.Integer, db.ForeignKey('doctor.id'))
     appointment_date = db.Column(db.Date)
+    status = db.Column(db.String(), default = 'Pending')
 
         

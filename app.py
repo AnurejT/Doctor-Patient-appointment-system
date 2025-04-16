@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, session, redirect, flash
 from models import db, Patient, Doctor, Appointment
 from datetime import datetime, date
 
+
 ADMIN_USERNAME = 'anurej'
 ADMIN_PASSWORD = '123'
 
@@ -10,6 +11,7 @@ app.secret_key = 'your_secret_key_here'
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///forbooking.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
 
 db.init_app(app)
 
@@ -89,11 +91,38 @@ def log_pat():
 def patient_logged():
     if 'patient_id' not in session:
         return redirect('/logpat')
-    
+
     patient_id = session['patient_id']
-    approved_doctors = Doctor.query.filter_by(is_approved = True).all()
-    appointments = Appointment.query.filter_by(patient_id = patient_id ).all()
-    return render_template('patlogged.html', approved_doctors = approved_doctors, appointments = appointments)
+
+    # Get all this patient's booked doctor IDs
+    appointments = Appointment.query.filter_by(patient_id=patient_id).all()
+    booked_doctor_ids = [appt.doctor_id for appt in appointments]
+
+    # Get all approved doctors
+    approved_doctors = Doctor.query.filter_by(is_approved=True).all()
+
+    # Only include approved doctors that this patient hasn't booked
+    unbooked_doctors = [doc for doc in approved_doctors if doc.id not in booked_doctor_ids]
+
+    # Get appointment details for the table
+    appointment_details = []
+    for appt in appointments:
+        doctor = Doctor.query.get(appt.doctor_id)
+        if doctor:
+            appointment_details.append({
+            'doctor_id': doctor.doct_id,  # fixed typo: it's 'doct_id' in your model
+            'doctor_name': doctor.full_name,
+            'date': appt.appointment_date
+        })
+
+
+    return render_template(
+        'patlogged.html',
+        approved_doctors=unbooked_doctors,
+        appointment_details=appointment_details
+    )
+
+
 
 @app.route('/logdoc', methods = ['GET', 'POST'])
 def log_doc():
@@ -119,7 +148,14 @@ def doctor_logged():
     if 'doctor_id' not in session:
         return redirect('/logdoc')
     
-    return render_template('doclogged.html')
+    doctor_id = session['doctor_id']
+    
+    appointment_requests = Patient.query.filter_by(status = 'pending', doctor_id = doctor_id).all()
+
+    fixed_appointments = Patient.query.filter_by(status = 'approved', doctor_id = doctor_id).all()
+
+    return render_template('doclogged.html', appointment_requests = appointment_requests, fixed_appointments = fixed_appointments)
+
 
     
 @app.route('/logadmin', methods = ['GET', 'POST'])
@@ -190,25 +226,36 @@ def delete_doctor(doctor_id):
 
 @app.route('/schedule_appointment', methods=['POST'])
 def schedule_appointment():
-    if request.method == 'POST':
-        patient_id = session.get('patient_id')
-        doctor_id = request.form['doctor_id']
-        appointment_date_str = request.form['appointment_date']
+    patient_id = session.get('patient_id')
+    doctor_id = request.form.get('doctor_id')
+    appointment_date_str = request.form.get('appointment_date')
+
+    if not doctor_id or not appointment_date_str:
+        flash("Please select both a doctor and a valid appointment date.")
+        return redirect('/patlogged')
+
+    try:
         appointment_date = datetime.strptime(appointment_date_str, '%Y-%m-%d').date()
+    except ValueError:
+        flash("Invalid date format. Please select a valid date.")
+        return redirect('/patlogged')
 
-        patient = Patient.query.get(patient_id)
-        doctor = Doctor.query.get(doctor_id)
+    patient = Patient.query.get(patient_id)
+    doctor = Doctor.query.get(doctor_id)
 
-        if patient and doctor:
-            appointment = Appointment(
-                patient_id=patient.id,
-                doctor_id=doctor.id,
-                appointment_date=appointment_date
-            )
-            db.session.add(appointment)
-            db.session.commit()
-            flash(f"Appointment scheduled with Dr. {doctor.full_name} on {appointment_date}.")
-            return redirect('/patlogged')
+    if patient and doctor:
+        appointment = Appointment(
+            patient_id=patient.id,
+            doctor_id=doctor.id,
+            appointment_date=appointment_date
+        )
+        db.session.add(appointment)
+        db.session.commit()
+        flash(f"Appointment scheduled with Dr. {doctor.full_name} on {appointment_date}.")
+    
+    return redirect('/patlogged')
+
+
 
 if __name__ == '__main__':
     app.run(debug=True, port=5001)
