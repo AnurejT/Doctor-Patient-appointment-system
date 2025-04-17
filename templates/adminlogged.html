@@ -57,9 +57,29 @@
         .btn-delete:hover {
             background-color: #c0392b;
         }
+
+        .navbar {
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #3f51b5;">
+        <div class="container-fluid">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/">Home</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
     <div class="container dashboard-container">
 
         {% with messages = get_flashed_messages() %}
@@ -69,21 +89,20 @@
             <div>{{ message }}</div>
             {% endfor %}
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-    {% endif %}
-    {% endwith %}
+        </div>
+        {% endif %}
+        {% endwith %}
 
-<script>
-    // Auto-dismiss after 2 seconds
-    setTimeout(function() {
-        const flash = document.getElementById('flash-message');
-        if (flash) {
-            flash.classList.remove('show'); // Trigger fade out
-            flash.classList.add('fade');    // Optional if needed
-        }
-    }, 2000);
-</script>
-
+        <script>
+            // Auto-dismiss after 2 seconds
+            setTimeout(function() {
+                const flash = document.getElementById('flash-message');
+                if (flash) {
+                    flash.classList.remove('show'); // Trigger fade out
+                    flash.classList.add('fade');    // Optional if needed
+                }
+            }, 2000);
+        </script>
 
         <h1>Admin Approval Dashboard</h1>
 

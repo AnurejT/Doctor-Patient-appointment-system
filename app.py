@@ -146,8 +146,6 @@ def patient_logged():
         fixed_appointments = fixed_appointments
     )
 
-
-
 @app.route('/logdoc', methods = ['GET', 'POST'])
 def log_doc():
     if request.method == 'GET':
@@ -334,5 +332,48 @@ def delete_appointment(appointment_id):
 def contact_us():
     return render_template('contact.html')
 
+@app.route('/update_patient', methods=['GET', 'POST'])
+def update_patient():
+    patient_id = session.get('patient_id')
+    patient = Patient.query.filter_by(id=patient_id).first()
+
+    if not patient:
+        flash("Patient not found.")
+        return redirect('/patlogged')
+
+    if request.method == 'POST':
+        # Update patient data from form
+        patient.full_name = request.form['full_name']
+        patient.dob = datetime.strptime(request.form['dob'], '%Y-%m-%d').date()
+        patient.address = request.form['address']
+
+        db.session.commit()
+        flash("Patient information updated successfully.")
+        return redirect('/patlogged')  # Message shown on that page
+
+    return render_template('update_pat.html', patient=patient)      
+
+@app.route('/update_doctor', methods = ['GET', 'POST'])
+def update_doctor():
+    doctor_id = session.get('doctor_id')
+    doctor = Doctor.query.filter_by(id = doctor_id).first()
+
+    if not doctor:
+        flash("Doctor not found.")
+        return redirect('/doclogged')
+
+    if request.method == 'POST':
+        # Update doctor data from form
+        doctor.full_name = request.form['full_name']
+        doctor.phone_no = request.form['phone']
+        doctor.dob = datetime.strptime(request.form['dob'], '%Y-%m-%d').date()
+        doctor.address = request.form['address']
+        doctor.specialization = request.form['speciality']
+
+        db.session.commit()
+        flash("Doctor information updated successfully.")
+        return redirect('/doclogged')  # Message shown on that page
+    
+    return render_template('update_doc.html', doctor = doctor)
 if __name__ == '__main__':
     app.run(debug=True, port=5001)
