@@ -7,7 +7,7 @@ class Patient(db.Model):
 
     id = db.Column(db.Integer, primary_key = True)
     full_name = db.Column(db.String())
-    phone_no = db.Column(db.String())
+    phone_no = db.Column(db.String(), unique = True, nullable = False)
     dob = db.Column(db.Date)
     address = db.Column(db.String())
     password = db.Column(db.String())
@@ -19,7 +19,7 @@ class Doctor(db.Model):
 
     id = db.Column(db.Integer, primary_key = True)
     full_name = db.Column(db.String())
-    phone_no = db.Column(db.String())
+    phone_no = db.Column(db.String(), unique = True, nullable = False)
     dob = db.Column(db.Date)
     address = db.Column(db.String())
     password = db.Column(db.String())

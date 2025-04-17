@@ -18,22 +18,40 @@ db.init_app(app)
 with app.app_context():
     db.create_all()
 
+@app.route('/')
+def home():
+    return render_template('home.html')    
+
 @app.route('/regpat', methods = ['GET', 'POST'])
 def reg_pat():
     if request.method == 'GET':
         return render_template('regpat.html')
     
     if request.method == 'POST':
+
+        phone = request.form['phone']
+        exist_patients = Patient.query.filter_by(phone_no = phone).all()
+
+        if exist_patients:
+            flash("Phone number already registered. Please log in or use a different number.")
+            return redirect('/regpat')
+        
+        password = request.form['password']
+        confirm_password = request.form['confirm_password']
+
+        if password != confirm_password:
+            flash("Passwords do not match. Please try again.")
+            return redirect('/regpat')
         
         dob_str = request.form['dob']
         dob_coverted = datetime.strptime(dob_str, '%Y-%m-%d').date()
 
         new_patient = Patient(
         full_name = request.form['full_name'],
-        phone_no = request.form['phone'],
+        phone_no = phone,
         dob = dob_coverted,
         address = request.form['address'],
-        password = request.form['password']
+        password = confirm_password
         )
         
         db.session.add(new_patient)
@@ -47,15 +65,36 @@ def reg_doc():
     
     if request.method == 'POST':
 
+        phone = request.form['phone']
+        exist_doctors_ph = Doctor.query.filter_by(phone_no = phone).all()
+
+        if exist_doctors_ph:
+            flash("Phone number already registered. Please log in or use a different number.")
+            return redirect('/regdoc')
+        
+        doctor_id = request.form['doc_id']
+        exist_doctors_docid = Doctor.query.filter_by(doct_id = doctor_id).all()
+
+        if exist_doctors_docid:
+            flash("This doctor ID already registered. Please log in or use a different doctor ID. ")
+            return redirect('/regdoc')
+        
+        password = request.form['password']
+        confirm_password = request.form['confirm_password']
+
+        if password != confirm_password:
+            flash("Passwords do not match. Please try again.")
+            return redirect('/regdoc')
+
         dob_str = request.form['dob']
         dob_converted = datetime.strptime(dob_str, '%Y-%m-%d').date()
 
         new_doctor = Doctor(
         full_name = request.form['full_name'],
-        phone_no = request.form['phone'],
+        phone_no = phone,
         dob = dob_converted,
         address = request.form['address'],
-        password = request.form['password'],
+        password = password,
         specialization = request.form['speciality'],
         doct_id = request.form['doc_id']
         )
@@ -63,10 +102,6 @@ def reg_doc():
         db.session.add(new_doctor)
         db.session.commit()
         return redirect('/')   
-    
-@app.route('/')
-def home():
-    return render_template('home.html')
 
 @app.route('/logpat', methods = ['GET', 'POST'])
 def log_pat():
@@ -100,34 +135,11 @@ def patient_logged():
     if 'patient_id' not in session:
         return redirect('/logpat')
 
-    patient_id = session['patient_id']
-
-    # Get all this patient's booked doctor IDs
-    appointments = Appointment.query.filter_by(patient_id=patient_id).all()
-    booked_doctor_ids = [appt.doctor_id for appt in appointments]
-
-    # Get all approved doctors
-    approved_doctors = Doctor.query.filter_by(is_approved=True).all()
-
-    # Only include approved doctors that this patient hasn't booked
-    unbooked_doctors = [doc for doc in approved_doctors if doc.id not in booked_doctor_ids]
-
-    # Get appointment details for the table
-    appointment_details = []
-    for appt in appointments:
-        doctor = Doctor.query.get(appt.doctor_id)
-        if doctor:
-            appointment_details.append({
-            'doctor_id': doctor.doct_id,  # fixed typo: it's 'doct_id' in your model
-            'doctor_name': doctor.full_name,
-            'date': appt.appointment_date
-        })
-
+    approved_doctors = Doctor.query.filter_by(is_approved = True).all()
     fixed_appointments = Appointment.query.filter_by(status = 'approved').all()
     return render_template(
         'patlogged.html',
-        approved_doctors=unbooked_doctors,
-        appointment_details=appointment_details,
+        approved_doctors = approved_doctors,
         fixed_appointments = fixed_appointments
     )
 
@@ -248,20 +260,17 @@ def schedule_appointment():
     doctor_id = request.form.get('doctor_id')
     appointment_date_str = request.form.get('appointment_date')
 
-    if not doctor_id or not appointment_date_str:
-        flash("Please select both a doctor and a valid appointment date.")
-        return redirect('/patlogged')
-
-    try:
-        appointment_date = datetime.strptime(appointment_date_str, '%Y-%m-%d').date()
-    except ValueError:
-        flash("Invalid date format. Please select a valid date.")
-        return redirect('/patlogged')
+    appointment_date = datetime.strptime(appointment_date_str, '%Y-%m-%d').date()
 
     patient = Patient.query.get(patient_id)
     doctor = Doctor.query.get(doctor_id)
 
     if patient and doctor:
+        exist_appointment = Appointment.query.filter_by(doctor_id = doctor_id, appointment_date = appointment_date, status = 'approved').first()
+        if exist_appointment:
+            flash(f"{doctor.full_name} is already booked on {appointment_date}. Please choose another date.")
+            return redirect('/patlogged')
+        
         appointment = Appointment(
         patient_id=patient.id,
         doctor_id=doctor.id,
@@ -270,7 +279,6 @@ def schedule_appointment():
     )
     db.session.add(appointment)
     db.session.commit()
-    flash(f"Appointment scheduled with Dr. {doctor.full_name} on {appointment_date}.")
     
     return redirect('/patlogged')
 
