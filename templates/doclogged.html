@@ -79,7 +79,9 @@
 
 
 <header>
-    <h1>Welcome</h1>
+    {% for doctor in doctors %}
+    <h1>Welcome Dr.{{doctor.full_name}}</h1>
+    {% endfor %}
 </header>
 
 <div class="main-container">

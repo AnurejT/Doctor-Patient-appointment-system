@@ -47,6 +47,30 @@
     </style>
 </head>
 <body>
+    <body>
+
+        <nav style="background-color: #122e5e; padding: 10px;">
+            <div style="max-width: 1200px; margin: auto; display: flex; justify-content: space-between; align-items: center; color: white;">
+                <div style="margin-left: auto;">
+                    <a href="/update_profile" style="color: white; text-decoration: none; margin-right: 20px;">Update Profile</a>
+                    <a href="/" style="color: white; text-decoration: none; margin-right: 20px;">Home</a>
+                    <a href="/contact_us" style="color: white; text-decoration: none;">Contact Us</a>
+                </div>
+            </div>
+        </nav>
+        
+        
+        <!-- Flash messages -->
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <ul>
+            {% for message in messages %}
+            <li style="color: red;">{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
+        
 
     {% with messages = get_flashed_messages() %}
     {% if messages %}
@@ -60,7 +84,9 @@
 
 
 <header>
-    <h1>Welcome to the Appointment System</h1>
+    {% for patient in patients %}
+    <h1>Welcome {{ patient.full_name }}</h1>
+    {% endfor %}
 </header>
 
 <div class="main-container">

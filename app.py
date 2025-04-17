@@ -134,11 +134,14 @@ def log_pat():
 def patient_logged():
     if 'patient_id' not in session:
         return redirect('/logpat')
-
+    
+    patient_id = session['patient_id']
+    patients = Patient.query.filter_by(id = patient_id).all()
     approved_doctors = Doctor.query.filter_by(is_approved = True).all()
     fixed_appointments = Appointment.query.filter_by(status = 'approved').all()
     return render_template(
         'patlogged.html',
+        patients = patients,
         approved_doctors = approved_doctors,
         fixed_appointments = fixed_appointments
     )
@@ -179,7 +182,7 @@ def doctor_logged():
         return redirect('/logdoc')
     
     doctor_id = session['doctor_id']
-    
+    doctors = Doctor.query.filter_by(id = doctor_id).all()
     appointment_requests = Appointment.query.filter_by(status = 'pending', doctor_id = doctor_id).all()
     fixed_appointments = Appointment.query.filter_by(status = 'approved', doctor_id = doctor_id).all()
     
@@ -195,10 +198,8 @@ def doctor_logged():
             dob = appt.patient.dob
             appt.patient.age = today.year - dob.year - ((today.month, today.day) < (dob.month, dob.day))
 
-    return render_template('doclogged.html', appointment_requests = appointment_requests, fixed_appointments = fixed_appointments)
-
-
-    
+    return render_template('doclogged.html', doctors = doctors, appointment_requests = appointment_requests, fixed_appointments = fixed_appointments)
+  
 @app.route('/logadmin', methods = ['GET', 'POST'])
 def log_admin():
     if request.method == 'GET':
@@ -328,6 +329,10 @@ def delete_appointment(appointment_id):
         db.session.commit()
         flash("Appointment deleted successfully.")
     return redirect('/doclogged')     
+
+@app.route('/contact_us')
+def contact_us():
+    return render_template('contact.html')
 
 if __name__ == '__main__':
     app.run(debug=True, port=5001)
