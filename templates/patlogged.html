@@ -8,52 +8,41 @@
         body {
             margin: 0;
             padding: 0;
-            font-family: Arial, sans-serif;
-        }
-
-        header {
-            text-align: center;
-            background-color: #f0f0f0;
-            padding: 20px 0;
-        }
-
-        .main-container {
-            display: flex;
-            justify-content: space-between;
-            padding: 20px;
-        }
-
-        .form-container {
-            width: 45%;
-        }
-
-        .table-container {
-            width: 50%;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        table, th, td {
-            border: 1px solid black;
-        }
-
-        th, td {
-            padding: 10px;
-            text-align: left;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f6f8;
+            color: #333;
         }
 
         nav {
             background-color: #122e5e;
-            padding: 10px;
+            padding: 15px 20px;
         }
 
         nav a {
             color: white;
             text-decoration: none;
-            margin-right: 20px;
+            margin-left: 25px;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        nav a:hover {
+            color: #f0db4f;
+        }
+
+        nav div {
+            max-width: 1200px;
+            margin: auto;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+        }
+
+        header {
+            background-color: #3657B5;
+            color: white;
+            padding: 30px 15px;
+            text-align: center;
         }
 
         .flash-message {
@@ -66,17 +55,109 @@
             width: 90%;
             text-align: center;
         }
+
+        .main-container {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            padding: 40px 20px;
+            flex-wrap: wrap;
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        .card {
+            width: 100%;
+            max-width: 500px;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            padding: 25px 30px;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        h2 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 20px;
+            color: #3657B5;
+            text-align: center;
+        }
+
+        label {
+            font-weight: 600;
+            font-size: 14px;
+            color: #333;
+            display: block;
+            margin-top: 10px;
+        }
+
+        select, input[type="date"], button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 8px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 15px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th, td {
+            border: 1px solid #eee;
+            padding: 12px 10px;
+            font-size: 14px;
+        }
+
+        th {
+            background-color: #3498db;
+            color: white;
+            text-align: left;
+        }
+
+        td {
+            background-color: #f9f9f9;
+        }
+
+        .no-data {
+            text-align: center;
+            color: #888;
+            padding: 20px;
+            font-style: italic;
+        }
     </style>
 </head>
 <body>
 
+    <!-- Navbar -->
     <nav>
-        <div style="max-width: 1200px; margin: auto; display: flex; justify-content: space-between; align-items: center; color: white;">
-            <div style="margin-left: auto;">
-                <a href="/update_patient">Update Profile</a>
-                <a href="/">Home</a>
-                <a href="/contact_us">Contact Us</a>
-            </div>
+        <div>
+            <a href="/update_patient">Update Profile</a>
+            <a href="/">Home</a>
+            <a href="/contact_us">Contact Us</a>
         </div>
     </nav>
 
@@ -91,43 +172,45 @@
       {% endif %}
     {% endwith %}
 
+    <!-- Header -->
     <header>
         {% for patient in patients %}
-        <h1>Welcome {{ patient.full_name }}</h1>
+        <h1>Welcome, {{ patient.full_name }}</h1>
         {% endfor %}
     </header>
 
+    <!-- Main Content -->
     <div class="main-container">
 
         <!-- Appointment Form -->
-        <div class="form-container">
-            <h2>Schedule an appointment with a doctor</h2>
+        <div class="card">
+            <h2>Schedule Appointment</h2>
             <form method="POST" action="/schedule_appointment">
-                <label for="doctor_id">Choose a doctor:</label><br>
+                <label for="doctor_id">Choose a doctor:</label>
                 <select name="doctor_id" id="doctor_id" required>
                     {% for doctor in approved_doctors %}
                         <option value="{{ doctor.id }}">{{ doctor.id }} - {{ doctor.full_name }} ({{ doctor.specialization }})</option>
                     {% endfor %}
-                </select><br><br>
+                </select>
 
-                <label for="appointment_date">Choose the date:</label><br><br>
-                <input type="date" id="appointment_date" name="appointment_date" required><br><br>
-                
+                <label for="appointment_date">Choose the date:</label>
+                <input type="date" id="appointment_date" name="appointment_date" required>
+
                 <button type="submit">Book Appointment</button>
             </form>
         </div>
 
-        <!-- Appointments Table -->
-        <div class="table-container">
-            <h2>Doctors and their scheduled appointments</h2>
+        <!-- Appointment Table -->
+        <div class="card">
+            <h2>Scheduled Appointments</h2>
             {% if fixed_appointments %}
             <table>
                 <thead>
                     <tr>
-                        <th>ID</th>
+                        <th>Doctor ID</th>
                         <th>Doctor Name</th>
                         <th>Specialization</th>
-                        <th>Appointment Scheduled Date</th>
+                        <th>Scheduled Date</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -142,9 +225,10 @@
                 </tbody>
             </table>
             {% else %}
-                <p>No appointments scheduled yet.</p>
+                <p class="no-data">No appointments scheduled yet.</p>
             {% endif %}
         </div>
+
     </div>
 
 </body>
