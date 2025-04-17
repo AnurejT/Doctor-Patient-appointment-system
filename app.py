@@ -181,8 +181,19 @@ def doctor_logged():
     doctor_id = session['doctor_id']
     
     appointment_requests = Appointment.query.filter_by(status = 'pending', doctor_id = doctor_id).all()
-
     fixed_appointments = Appointment.query.filter_by(status = 'approved', doctor_id = doctor_id).all()
+    
+    today = date.today()
+
+    for appt in appointment_requests:
+        if appt.patient:
+            dob = appt.patient.dob
+            appt.patient.age = today.year - dob.year - ((today.month, today.day) < (dob.month, dob.day))
+
+    for appt in fixed_appointments:
+        if appt.patient:
+            dob = appt.patient.dob
+            appt.patient.age = today.year - dob.year - ((today.month, today.day) < (dob.month, dob.day))
 
     return render_template('doclogged.html', appointment_requests = appointment_requests, fixed_appointments = fixed_appointments)
 
@@ -266,9 +277,15 @@ def schedule_appointment():
     doctor = Doctor.query.get(doctor_id)
 
     if patient and doctor:
+        exist_appointment_same_patient = Appointment.query.filter_by(doctor_id = doctor_id, patient_id = patient_id, appointment_date = appointment_date, status = 'pending').first()
+        if exist_appointment_same_patient:
+            flash(f"Doctor {doctor.full_name} has already got an appointment request on {appointment_date} from you. Try another date.")
+            return redirect('/patlogged')
+        
+    if patient and doctor:
         exist_appointment = Appointment.query.filter_by(doctor_id = doctor_id, appointment_date = appointment_date, status = 'approved').first()
         if exist_appointment:
-            flash(f"{doctor.full_name} is already booked on {appointment_date}. Please choose another date.")
+            flash(f"Doctor {doctor.full_name} has already an appointment on {appointment_date}. Try another date.")
             return redirect('/patlogged')
         
         appointment = Appointment(
@@ -279,7 +296,7 @@ def schedule_appointment():
     )
     db.session.add(appointment)
     db.session.commit()
-    
+    flash(f"Appointment request sent to the doctor {doctor.full_name} for {appointment_date}.")
     return redirect('/patlogged')
 
 @app.route('/approve_appointment/<int:appointment_id>', methods = ['POST'])
@@ -292,6 +309,25 @@ def approve_appointment(appointment_id):
         flash("Appointment approved successfully.")
     return redirect('/doclogged')
 
+@app.route('/reject_appointment/<int:appointment_id>', methods = ['POST'])
+def reject_appointment(appointment_id):
+
+    appointment = Appointment.query.get(appointment_id)
+    if appointment and appointment.status in ['pending', 'approved']:
+        appointment.status = 'rejected'
+        db.session.commit()
+        flash("Appointment rejected successfully.")
+    return redirect('/doclogged') 
+
+@app.route('/delete_appointment/<int:appointment_id>', methods = ['POST'])
+def delete_appointment(appointment_id):
+
+    appointment = Appointment.query.get(appointment_id)
+    if appointment and appointment.status in ['pending', 'approved']:
+        appointment.status = 'rejected'
+        db.session.commit()
+        flash("Appointment deleted successfully.")
+    return redirect('/doclogged')     
 
 if __name__ == '__main__':
     app.run(debug=True, port=5001)

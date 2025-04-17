@@ -67,6 +67,16 @@
     </style>
 </head>
 <body>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <ul>
+        {% for message in messages %}
+        <li style="color: red;">{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    {% endwith %}
+
 
 <header>
     <h1>Welcome</h1>
@@ -82,14 +92,22 @@
             <thead>
                 <tr>
                     <th>Patient Name</th>
+                    <th>Age</th>
                     <th>Appointment Date</th>
+                    <th>Delete</th>
                 </tr>
             </thead>
             <tbody>
                 {% for appt in fixed_appointments %}
                 <tr>
                     <td>{{ appt.patient.full_name }}</td>
+                    <td>{{  appt.patient.age }}</td>
                     <td>{{ appt.appointment_date }}</td>
+                    <td>
+                        <form method="POST" action="/delete_appointment/{{ appt.id }}" style="display:inline;">
+                            <button type="submit" class="reject">Delete</button>
+                        </form>
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -107,6 +125,7 @@
             <thead>
                 <tr>
                     <th>Patient Name</th>
+                    <th>Age</th>
                     <th>Date Requested</th>
                     <th>Actions</th>
                 </tr>
@@ -115,13 +134,14 @@
                 {% for req in appointment_requests %}
                 <tr>
                     <td>{{ req.patient.full_name }}</td>
+                    <td>{{ req.patient.age }}</td>
                     <td>{{ req.appointment_date }}</td>
                     <td>
                         <form method="POST" action="/approve_appointment/{{ req.id }}" style="display:inline;">
                             <input type="hidden" name="appointment_id" value="{{ req.id }}">
                             <button type="submit">Approve</button>
                         </form>
-                        <form method="POST" action="/reject_appointment" style="display:inline;">
+                        <form method="POST" action="/reject_appointment/{{ req.id }}" style="display:inline;">
                             <input type="hidden" name="appointment_id" value="{{ req.id }}">
                             <button type="submit" class="reject">Reject</button>
                         </form>

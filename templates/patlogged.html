@@ -48,6 +48,17 @@
 </head>
 <body>
 
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <ul>
+        {% for message in messages %}
+        <li style="color: red;">{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    {% endwith %}
+
+
 <header>
     <h1>Welcome to the Appointment System</h1>
 </header>
@@ -79,14 +90,16 @@
         <table>
             <thead>
                 <tr>
+                    <th>ID</th>
                     <th>Doctor Name</th>
                     <th>Specialization</th>
-                    <th>Appointment Date</th>
+                    <th>Appointment Scheduled Date</th>
                 </tr>
             </thead>
             <tbody>
                 {% for appointment in fixed_appointments %}
                     <tr>
+                        <td>{{ appointment.doctor.id}}</td>
                         <td>{{ appointment.doctor.full_name }}</td>
                         <td>{{ appointment.doctor.specialization }}</td>
                         <td>{{ appointment.appointment_date }}</td>
