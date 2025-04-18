@@ -5,178 +5,181 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Patient Dashboard</title>
     <style>
-         #flash-wrapper {
-      position: fixed;
-      top: 20px;
-      left: 0;
-      width: 100%;
-      z-index: 1050;
-      text-align: center;
-      pointer-events: none;
+    
+    #flash-wrapper {
+        position: fixed;
+        top: 20px;
+        left: 0;
+        width: 100%;
+        z-index: 1050;
+        text-align: center;
+        pointer-events: none;
     }
 
     .custom-flash {
-  display: inline-block;
-  margin: 10px auto;
-  padding: 12px 24px;
-  border-radius: 6px;
-  font-weight: bold;
-  color: white;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-  animation: fadeout 4s forwards;
-  pointer-events: auto;
-}
+        display: inline-block;
+       margin: 10px auto;
+       padding: 12px 24px;
+       border-radius: 6px;
+       font-weight: bold;
+       color: white;
+       box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+       animation: fadeout 4s forwards;
+       pointer-events: auto;
+    }
 
-.custom-flash.success {
-  background-color: #28a745; /* Green */
-}
+    .custom-flash.success {
+        
+        background-color: #28a745;
+    }
 
-.custom-flash.danger {
-  background-color: #dc3545; /* Red */
-}
+    .custom-flash.danger {
+        background-color: #dc3545;
+    }
 
-.custom-flash.info {
-  background-color: #17a2b8; /* Blue */
-}
+    .custom-flash.info {
+        background-color: #17a2b8; /* Blue */
+    }
 
 
     @keyframes fadeout {
-      0%   { opacity: 1; }
-      80%  { opacity: 1; }
-      100% { opacity: 0; transform: translateY(-20px); }
+        0%   { opacity: 1; }
+        80%  { opacity: 1; }
+        100% { opacity: 0; transform: translateY(-20px); }
     }
 
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f6f8;
-            color: #333;
-        }
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f4f6f8;
+        color: #333;
+    }
 
-        nav {
-            background-color: #122e5e;
-            padding: 15px 20px;
-        }
+    nav {
+         background-color: #122e5e;
+        padding: 15px 20px;
+    }
 
-        nav a {
-            color: white;
-            text-decoration: none;
-            margin-left: 25px;
-            font-weight: 500;
-            transition: color 0.3s ease;
-        }
+    nav a {
+        color: white;
+        text-decoration: none;
+        margin-left: 25px;
+        font-weight: 500;
+        transition: color 0.3s ease;
+    }
 
-        nav a:hover {
-            color: #f0db4f;
-        }
+    nav a:hover {
+        color: #f0db4f;
+    }
 
-        nav div {
-            max-width: 1200px;
-            margin: auto;
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-        }
+    nav div {
+        max-width: 1200px;
+        margin: auto;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+    }
 
-        header {
-            background-color: #3657B5;
-            color: white;
-            padding: 30px 15px;
-            text-align: center;
-        }
-        .main-container {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            padding: 40px 20px;
-            flex-wrap: wrap;
-            max-width: 1200px;
-            margin: auto;
-        }
+    header {
+        background-color: #3657B5;
+        color: white;
+        padding: 30px 15px;
+        text-align: center;
+    }
+    .main-container {
+        display: flex;
+        justify-content: center;
+        gap: 30px;
+        padding: 40px 20px;
+        flex-wrap: wrap;
+        max-width: 1200px;
+        margin: auto;
+    }
 
-        .card {
-            width: 100%;
-            max-width: 500px;
-            background-color: white;
-            border-radius: 12px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-            padding: 25px 30px;
-            transition: transform 0.3s ease;
-        }
+    .card {
+        width: 100%;
+        max-width: 500px;
+        background-color: white;
+        border-radius: 12px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        padding: 25px 30px;
+        transition: transform 0.3s ease;
+    }
 
-        .card:hover {
-            transform: translateY(-5px);
-        }
+    .card:hover {
+        transform: translateY(-5px);
+    }
 
-        h2 {
-            margin-top: 0;
-            margin-bottom: 15px;
-            font-size: 20px;
-            color: #3657B5;
-            text-align: center;
-        }
+    h2 {
+        margin-top: 0;
+        margin-bottom: 15px;
+        font-size: 20px;
+        color: #3657B5;
+        text-align: center;
+    }
 
-        label {
-            font-weight: 600;
-            font-size: 14px;
-            color: #333;
-            display: block;
-            margin-top: 10px;
-        }
+    label {
+        font-weight: 600;
+        font-size: 14px;
+        color: #333;
+        display: block;
+        margin-top: 10px;
+    }
 
-        select, input[type="date"], button {
-            width: 100%;
-            padding: 10px;
-            margin-top: 8px;
-            border-radius: 8px;
-            border: 1px solid #ccc;
-            font-size: 16px;
-            box-sizing: border-box;
-        }
+    select, input[type="date"], button {
+        width: 100%;
+        padding: 10px;
+        margin-top: 8px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        font-size: 16px;
+        box-sizing: border-box;
+    }
 
-        button {
-            background-color: #3498db;
-            color: white;
-            border: none;
-            cursor: pointer;
-            font-size: 16px;
-            margin-top: 15px;
-            transition: background-color 0.3s ease;
-        }
+    button {
+        background-color: #3498db;
+        color: white;
+        border: none;
+        cursor: pointer;
+        font-size: 16px;
+        margin-top: 15px;
+        transition: background-color 0.3s ease;
+    }
 
-        button:hover {
-            background-color: #2980b9;
-        }
+    button:hover {
+        background-color: #2980b9;
+    }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-        }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+    }
 
-        th, td {
-            border: 1px solid #eee;
-            padding: 12px 10px;
-            font-size: 14px;
-        }
+    th, td {
+        border: 1px solid #eee;
+        padding: 12px 10px;
+        font-size: 14px;
+    }
 
-        th {
-            background-color: #3498db;
-            color: white;
-            text-align: left;
-        }
+    th {
+        background-color: #3498db;
+        color: white;
+        text-align: left;
+    }
 
-        td {
-            background-color: #f9f9f9;
-        }
+    td {
+         background-color: #f9f9f9;
+    }
 
-        .no-data {
-            text-align: center;
-            color: #888;
-            padding: 20px;
-            font-style: italic;
-        }
+    .no-data {
+        text-align: center;
+        color: #888;
+        padding: 20px;
+        font-style: italic;
+    }
+
     </style>
 </head>
 <body>
@@ -190,9 +193,8 @@
         {% endfor %}
       </div>
     {% endif %}
-  {% endwith %}
+    {% endwith %}
 
-    <!-- Navbar -->
     <nav>
         <div>
             <a href="/update_patient">Update Profile</a>
@@ -201,17 +203,14 @@
         </div>
     </nav>
 
-    <!-- Header -->
     <header>
         {% for patient in patients %}
         <h1>Welcome, {{ patient.full_name }}</h1>
         {% endfor %}
     </header>
 
-    <!-- Main Content -->
     <div class="main-container">
 
-        <!-- Appointment Form -->
         <div class="card">
             <h2>Schedule Appointment</h2>
             <form method="POST" action="/schedule_appointment">
@@ -229,7 +228,6 @@
             </form>
         </div>
 
-        <!-- Appointment Table -->
         <div class="card">
             <h2>Scheduled Appointments</h2>
             {% if fixed_appointments %}
