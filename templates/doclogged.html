@@ -5,136 +5,176 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Doctor Dashboard</title>
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f6f8;
-            color: #333;
-        }
+    
+    #flash-wrapper {
+        position: fixed;
+        top: 20px;
+        left: 0;
+        width: 100%;
+        z-index: 1050;
+        text-align: center;
+        pointer-events: none;
+    }
+    
+    .custom-flash {
+        display: inline-block;
+        margin: 10px auto;
+        padding: 12px 24px;
+        border-radius: 6px;
+        font-weight: bold;
+        color: white;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        animation: fadeout 4s forwards;
+        pointer-events: auto;
+    }
 
-        nav {
-            background-color: #122e5e;
-            padding: 15px 20px;
-        }
+    .custom-flash.success {
+        background-color: #28a745;
+    }
 
-        nav a {
-            color: white;
-            text-decoration: none;
-            margin-left: 25px;
-            font-weight: 500;
-            transition: color 0.3s ease;
-        }
+    .custom-flash.danger {
+        background-color: #dc3545;
+    }
+    .custom-flash.info {
+        background-color: #17a2b8; 
+    }
 
-        nav a:hover {
-            color: #f0db4f;
-        }
+    @keyframes fadeout {
+      0%   { opacity: 1; }
+      80%  { opacity: 1; }
+      100% { opacity: 0; transform: translateY(-20px); }
+    }
 
-        nav div {
-            max-width: 1200px;
-            margin: auto;
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-        }
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f6f8;
+        color: #333;
+    }
 
-        .flash-message {
-            background-color: #f8d7da;
-            color: #842029;
-            border: 1px solid #f5c2c7;
-            padding: 15px;
-            border-radius: 5px;
-            margin: 20px auto;
-            width: 90%;
-            text-align: center;
-        }
+    nav {
+        background-color: #122e5e;
+        padding: 15px 20px;
+    }
 
-        header {
-            background-color: #3657B5;
-            color: white;
-            padding: 30px 15px;
-            text-align: center;
-        }
+    nav a {
+        color: white;
+        text-decoration: none;
+        margin-left: 25px;
+        font-weight: 500;
+        transition: color 0.3s ease;
+    }
 
-        .main-container {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            padding: 40px 20px;
-            flex-wrap: wrap;
-            max-width: 1200px;
-            margin: auto;
-        }
+    nav a:hover {
+        color: #f0db4f;
+    }
 
-        .card {
-            width: 100%;
-            max-width: 500px;
-            background-color: white;
-            border-radius: 12px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-            padding: 25px 30px;
-            transition: transform 0.3s ease;
-        }
+    nav div {
+        max-width: 1200px;
+        margin: auto;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+    }
 
-        .card:hover {
-            transform: translateY(-5px);
-        }
+    header {
+        background-color: #3657B5;
+        color: white;
+        padding: 30px 15px;
+        text-align: center;
+    }
 
-        h2 {
-            margin-top: 0;
-            margin-bottom: 15px;
-            font-size: 20px;
-            color: #3657B5;
-        }
+    .main-container {
+        display: flex;
+        justify-content: center;
+        gap: 30px;
+        padding: 40px 20px;
+        flex-wrap: wrap;
+        max-width: 1200px;
+        margin: auto;
+    }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-        }
+    .card {
+        width: 100%;
+        max-width: 500px;
+        background-color: white;
+        border-radius: 12px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        padding: 25px 30px;
+        transition: transform 0.3s ease;
+    }
 
-        th, td {
-            border: 1px solid #eee;
-            padding: 12px 10px;
-            font-size: 14px;
-        }
+    .card:hover {
+        transform: translateY(-5px);
+    }
 
-        th {
-            background-color: #f0f0f0;
-            text-align: left;
-        }
+    h2 {
+        margin-top: 0;
+        margin-bottom: 15px;
+        font-size: 20px;
+        color: #3657B5;
+    }
 
-        td form {
-            display: inline;
-        }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+    }
 
-        button {
-            padding: 6px 12px;
-            background-color: #3498db;
-            border: none;
-            color: white;
-            cursor: pointer;
-            border-radius: 6px;
-            font-size: 14px;
-            transition: background-color 0.3s ease;
-        }
+    th, td {
+        border: 1px solid #eee;
+        padding: 12px 10px;
+        font-size: 14px;
+    }
 
-        button:hover {
-            background-color: #2980b9;
-        }
+    th {
+        background-color: #f0f0f0;
+        text-align: left;
+    }
 
-        button.reject {
-            background-color: #e74c3c;
-        }
+    td form {
+        display: inline;
+    }
 
-        button.reject:hover {
-            background-color: #c0392b;
-        }
+    button {
+        padding: 6px 12px;
+        background-color: #3498db;
+        border: none;
+        color: white;
+        cursor: pointer;
+        border-radius: 6px;
+        font-size: 14px;
+        transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+        background-color: #2980b9;
+    }
+
+    button.reject {
+        background-color: #e74c3c;
+    }
+
+    button.reject:hover {
+        background-color: #c0392b;
+    }
+
     </style>
 </head>
 <body>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div id="flash-wrapper">
+        {% for category, message in messages %}
+          <div class="custom-flash {{ category }}">
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+    {% endwith %}
 
-    <!-- Navbar -->
     <nav>
         <div>
             <a href="/update_doctor">Update Profile</a>
@@ -143,28 +183,14 @@
         </div>
     </nav>
 
-    <!-- Flash messages -->
-    {% with messages = get_flashed_messages() %}
-    {% if messages %}
-        {% for message in messages %}
-            <div class="flash-message">
-                {{ message }}
-            </div>
-        {% endfor %}
-    {% endif %}
-    {% endwith %}
-
-    <!-- Header -->
     <header>
         {% for doctor in doctors %}
         <h1>Welcome Dr. {{ doctor.full_name }}</h1>
         {% endfor %}
     </header>
 
-    <!-- Main Container -->
     <div class="main-container">
 
-        <!-- Fixed Appointments Section -->
         <div class="card">
             <h2>Your Fixed Appointments</h2>
             {% if fixed_appointments %}
@@ -197,7 +223,6 @@
             {% endif %}
         </div>
 
-        <!-- Appointment Requests Section -->
         <div class="card">
             <h2>Appointment Requests for You</h2>
             {% if appointment_requests %}

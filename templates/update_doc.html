@@ -120,18 +120,6 @@
             <a href="/">Home</a>
         </div>
     </nav>
-
-    <!-- Flash messages -->
-    {% with messages = get_flashed_messages() %}
-      {% if messages %}
-        {% for message in messages %}
-          <div class="flash-message">
-            {{ message }}
-          </div>
-        {% endfor %}
-      {% endif %}
-    {% endwith %}
-
     <div class="form-container">
         <h2>Edit Your Profile</h2> <!-- Text size now matches patient edit page -->
         <form action="/update_doctor" method="POST">

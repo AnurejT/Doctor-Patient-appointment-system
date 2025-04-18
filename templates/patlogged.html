@@ -5,6 +5,47 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Patient Dashboard</title>
     <style>
+         #flash-wrapper {
+      position: fixed;
+      top: 20px;
+      left: 0;
+      width: 100%;
+      z-index: 1050;
+      text-align: center;
+      pointer-events: none;
+    }
+
+    .custom-flash {
+  display: inline-block;
+  margin: 10px auto;
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-weight: bold;
+  color: white;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  animation: fadeout 4s forwards;
+  pointer-events: auto;
+}
+
+.custom-flash.success {
+  background-color: #28a745; /* Green */
+}
+
+.custom-flash.danger {
+  background-color: #dc3545; /* Red */
+}
+
+.custom-flash.info {
+  background-color: #17a2b8; /* Blue */
+}
+
+
+    @keyframes fadeout {
+      0%   { opacity: 1; }
+      80%  { opacity: 1; }
+      100% { opacity: 0; transform: translateY(-20px); }
+    }
+
         body {
             margin: 0;
             padding: 0;
@@ -44,18 +85,6 @@
             padding: 30px 15px;
             text-align: center;
         }
-
-        .flash-message {
-            background-color: #f8d7da;
-            color: #842029;
-            border: 1px solid #f5c2c7;
-            padding: 15px;
-            border-radius: 5px;
-            margin: 20px auto;
-            width: 90%;
-            text-align: center;
-        }
-
         .main-container {
             display: flex;
             justify-content: center;
@@ -151,6 +180,17 @@
     </style>
 </head>
 <body>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div id="flash-wrapper">
+        {% for category, message in messages %}
+          <div class="custom-flash {{ category }}">
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
 
     <!-- Navbar -->
     <nav>
@@ -160,17 +200,6 @@
             <a href="/contact_us">Contact Us</a>
         </div>
     </nav>
-
-    <!-- Flash messages -->
-    {% with messages = get_flashed_messages() %}
-      {% if messages %}
-        {% for message in messages %}
-          <div class="flash-message">
-            {{ message }}
-          </div>
-        {% endfor %}
-      {% endif %}
-    {% endwith %}
 
     <!-- Header -->
     <header>
@@ -196,7 +225,7 @@
                 <label for="appointment_date">Choose the date:</label>
                 <input type="date" id="appointment_date" name="appointment_date" required>
 
-                <button type="submit">Book Appointment</button>
+                <button type="submit">Send Appointment Request</button>
             </form>
         </div>
 

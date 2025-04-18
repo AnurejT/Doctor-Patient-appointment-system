@@ -33,14 +33,14 @@ def reg_pat():
         exist_patients = Patient.query.filter_by(phone_no = phone).all()
 
         if exist_patients:
-            flash("Phone number already registered. Please log in or use a different number.")
+            flash('Phone number already registered. Please log in or use a different number.', 'danger')
             return redirect('/regpat')
         
         password = request.form['password']
         confirm_password = request.form['confirm_password']
 
         if password != confirm_password:
-            flash("Passwords do not match. Please try again.")
+            flash('Passwords do not match. Please try again.', 'danger')
             return redirect('/regpat')
         
         dob_str = request.form['dob']
@@ -56,6 +56,7 @@ def reg_pat():
         
         db.session.add(new_patient)
         db.session.commit()
+        flash('Registration request sent succesfully', 'success')
         return redirect('/')
     
 @app.route('/regdoc', methods = ['GET', 'POST'])
@@ -69,21 +70,21 @@ def reg_doc():
         exist_doctors_ph = Doctor.query.filter_by(phone_no = phone).all()
 
         if exist_doctors_ph:
-            flash("Phone number already registered. Please log in or use a different number.")
+            flash('Phone number already registered. Please log in or use a different number', 'danger')
             return redirect('/regdoc')
         
         doctor_id = request.form['doc_id']
         exist_doctors_docid = Doctor.query.filter_by(doct_id = doctor_id).all()
 
         if exist_doctors_docid:
-            flash("This doctor ID already registered. Please log in or use a different doctor ID. ")
+            flash('This doctor ID already registered. Please log in or use a different doctor ID', 'danger')
             return redirect('/regdoc')
         
         password = request.form['password']
         confirm_password = request.form['confirm_password']
 
         if password != confirm_password:
-            flash("Passwords do not match. Please try again.")
+            flash('Passwords do not match. Please try again.', 'danger')
             return redirect('/regdoc')
 
         dob_str = request.form['dob']
@@ -101,6 +102,7 @@ def reg_doc():
 
         db.session.add(new_doctor)
         db.session.commit()
+        flash('Registration request sent succesfully', 'success')
         return redirect('/')   
 
 @app.route('/logpat', methods = ['GET', 'POST'])
@@ -120,15 +122,18 @@ def log_pat():
             if patient and patient.password == password:
                 if patient.is_approved == True:
                     session['patient_id'] = patient.id
+                    flash('Logged in successfully', 'success')
                     return redirect('/patlogged')
                 else:
-                    return 'Your account is not approved yet by the admin. Please wait for admin approval.'
+                    flash('Your account is not approved yet by the admin. Please wait for admin approval.', 'danger')
+                    return redirect('/logpat')
             else:
-                flash('Invalid password')
+                flash('Invalid password', 'danger')
                 return redirect('/logpat')
                 
         else:
-            return 'Invalid phone number'
+            flash('Invalid phone number', 'danger')
+            return redirect('/logpat')
         
 @app.route('/patlogged')
 def patient_logged():
@@ -163,15 +168,17 @@ def log_doc():
             if doctor and doctor.password == password:
                 if doctor.is_approved == True:
                     session['doctor_id'] = doctor.id
+                    flash('Logged in successfully', 'success')
                     return redirect('/doclogged')
                 else:
-                    return 'Your account is not approved yet by the admin. Please wait for admin approval.'
+                    flash('Your account is not approved yet by the admin. Please wait for admin approval', 'danger')
+                    return redirect('/logdoc')
             else:
-                flash('Invalid password')
+                flash('Invalid password', 'danger')
                 return redirect('/logdoc')
         
         else:
-            flash('Invalid doctor ID')
+            flash('Invalid doctor ID', 'danger')
             return redirect('/logdoc')      
         
 @app.route('/doclogged')
@@ -200,8 +207,6 @@ def doctor_logged():
   
 @app.route('/logadmin', methods = ['GET', 'POST'])
 def log_admin():
-    if request.method == 'GET':
-        return render_template('logadmin.html')
     
     if request.method == 'POST':
 
@@ -210,10 +215,14 @@ def log_admin():
 
         if username == ADMIN_USERNAME and password == ADMIN_PASSWORD:
             session['admin_logged_in'] = True
+            flash('Logged in succesfully', 'success')
             return redirect('/adminlogged')
         
         else:
-            return 'Invalid credentials for admin'
+            flash('Invalid credentials for admin', 'danger')
+            return redirect('/logadmin')
+        
+    return render_template('logadmin.html')    
         
 @app.route('/adminlogged')
 def admin_logged():
@@ -234,7 +243,7 @@ def approve_patient(patient_id):
     if patient:
         patient.is_approved = True
         db.session.commit()
-        flash(f"Patient {patient.full_name} approved successfully.")
+        flash(f'Patient {patient.full_name} approved successfully', 'info')
     return redirect('/adminlogged')
 
 @app.route('/delete_patient/<int:patient_id>', methods=['POST'])
@@ -243,7 +252,7 @@ def delete_patient(patient_id):
     if patient:
         db.session.delete(patient)
         db.session.commit()
-        flash(f"Patient {patient.full_name} deleted successfully.")
+        flash(f'Patient {patient.full_name} deleted successfully', 'danger')
     return redirect('/adminlogged')
 
 @app.route('/approve_doctor/<int:doctor_id>', methods=['POST'])
@@ -252,7 +261,7 @@ def approve_doctor(doctor_id):
     if doctor:
         doctor.is_approved = True
         db.session.commit()
-        flash(f"Doctor {doctor.full_name} approved successfully.")
+        flash(f'Doctor {doctor.full_name} approved successfully', 'info')
     return redirect('/adminlogged')
 
 @app.route('/delete_doctor/<int:doctor_id>', methods=['POST'])
@@ -261,7 +270,7 @@ def delete_doctor(doctor_id):
     if doctor:
         db.session.delete(doctor)
         db.session.commit()
-        flash(f"Doctor {doctor.full_name} deleted successfully.")
+        flash(f'Doctor {doctor.full_name} deleted successfully', 'danger')
     return redirect('/adminlogged')
 
 @app.route('/schedule_appointment', methods=['POST'])
@@ -278,24 +287,24 @@ def schedule_appointment():
     if patient and doctor:
         exist_appointment_same_patient = Appointment.query.filter_by(doctor_id = doctor_id, patient_id = patient_id, appointment_date = appointment_date, status = 'pending').first()
         if exist_appointment_same_patient:
-            flash(f"Doctor {doctor.full_name} has already got an appointment request on {appointment_date} from you. Try another date.")
+            flash(f'Doctor {doctor.full_name} has already got an appointment request on {appointment_date} from you. Try another date.', 'danger')
             return redirect('/patlogged')
         
     if patient and doctor:
         exist_appointment = Appointment.query.filter_by(doctor_id = doctor_id, appointment_date = appointment_date, status = 'approved').first()
         if exist_appointment:
-            flash(f"Doctor {doctor.full_name} has already an appointment on {appointment_date}. Try another date.")
+            flash(f'Doctor {doctor.full_name} has already an appointment on {appointment_date}. Try another date', 'danger')
             return redirect('/patlogged')
         
         appointment = Appointment(
         patient_id=patient.id,
         doctor_id=doctor.id,
         appointment_date=appointment_date,
-        status='pending'  # ✅ This goes here
+        status='pending'
     )
     db.session.add(appointment)
     db.session.commit()
-    flash(f"Appointment request sent to the doctor {doctor.full_name} for {appointment_date}.")
+    flash(f'Appointment request sent to the doctor {doctor.full_name} for {appointment_date}.', 'info')
     return redirect('/patlogged')
 
 @app.route('/approve_appointment/<int:appointment_id>', methods = ['POST'])
@@ -305,7 +314,7 @@ def approve_appointment(appointment_id):
     if appointment.status == 'pending':
         appointment.status = 'approved'
         db.session.commit()
-        flash("Appointment approved successfully.")
+        flash('Appointment approved successfully', 'success')
     return redirect('/doclogged')
 
 @app.route('/reject_appointment/<int:appointment_id>', methods = ['POST'])
@@ -315,7 +324,7 @@ def reject_appointment(appointment_id):
     if appointment and appointment.status in ['pending', 'approved']:
         appointment.status = 'rejected'
         db.session.commit()
-        flash("Appointment rejected successfully.")
+        flash('Appointment rejected successfully', 'danger')
     return redirect('/doclogged') 
 
 @app.route('/delete_appointment/<int:appointment_id>', methods = ['POST'])
@@ -325,7 +334,7 @@ def delete_appointment(appointment_id):
     if appointment and appointment.status in ['pending', 'approved']:
         appointment.status = 'rejected'
         db.session.commit()
-        flash("Appointment deleted successfully.")
+        flash('Appointment deleted successfully', 'danger')
     return redirect('/doclogged')     
 
 @app.route('/contact_us')
@@ -337,19 +346,14 @@ def update_patient():
     patient_id = session.get('patient_id')
     patient = Patient.query.filter_by(id=patient_id).first()
 
-    if not patient:
-        flash("Patient not found.")
-        return redirect('/patlogged')
-
     if request.method == 'POST':
-        # Update patient data from form
         patient.full_name = request.form['full_name']
         patient.dob = datetime.strptime(request.form['dob'], '%Y-%m-%d').date()
         patient.address = request.form['address']
 
         db.session.commit()
-        flash("Patient information updated successfully.")
-        return redirect('/patlogged')  # Message shown on that page
+        flash('Your profile updated successfully', 'success')
+        return redirect('/patlogged')  
 
     return render_template('update_pat.html', patient=patient)      
 
@@ -358,12 +362,7 @@ def update_doctor():
     doctor_id = session.get('doctor_id')
     doctor = Doctor.query.filter_by(id = doctor_id).first()
 
-    if not doctor:
-        flash("Doctor not found.")
-        return redirect('/doclogged')
-
     if request.method == 'POST':
-        # Update doctor data from form
         doctor.full_name = request.form['full_name']
         doctor.phone_no = request.form['phone']
         doctor.dob = datetime.strptime(request.form['dob'], '%Y-%m-%d').date()
@@ -371,8 +370,8 @@ def update_doctor():
         doctor.specialization = request.form['speciality']
 
         db.session.commit()
-        flash("Doctor information updated successfully.")
-        return redirect('/doclogged')  # Message shown on that page
+        flash('Your profile updated successfully', 'success')
+        return redirect('/doclogged')  
     
     return render_template('update_doc.html', doctor = doctor)
 if __name__ == '__main__':
