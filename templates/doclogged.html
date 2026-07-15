@@ -1,264 +1,163 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Doctor Dashboard</title>
-    <style>
-    
-    #flash-wrapper {
-        position: fixed;
-        top: 20px;
-        left: 0;
-        width: 100%;
-        z-index: 1050;
-        text-align: center;
-        pointer-events: none;
-    }
-    
-    .custom-flash {
-        display: inline-block;
-        margin: 10px auto;
-        padding: 12px 24px;
-        border-radius: 6px;
-        font-weight: bold;
-        color: white;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-        animation: fadeout 4s forwards;
-        pointer-events: auto;
-    }
+{% extends "base.html" %}
+{% block title %}Doctor Dashboard{% endblock %}
 
-    .custom-flash.success {
-        background-color: #28a745;
-    }
+{% block extra_head %}
+<style>
+  .dash-header {
+    background: var(--bg-card); border-bottom: 1px solid var(--border);
+    padding: 28px 32px; display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 16px;
+  }
+  .dash-welcome h2 { font-size: 1.6rem; font-weight: 800; }
+  .dash-welcome h2 span { background: linear-gradient(135deg, #7c5de8, #a78bfa);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .dash-welcome p { color: var(--text-muted); font-size: 0.875rem; margin-top: 4px; }
+  .dash-avatar {
+    width: 52px; height: 52px; border-radius: 50%;
+    background: linear-gradient(135deg, #7c5de8, #a78bfa);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.3rem; font-weight: 700; color: white; flex-shrink: 0;
+  }
+  .dash-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 24px; margin-top: 32px;
+  }
+  @media (max-width: 860px) { .dash-grid { grid-template-columns: 1fr; } }
+  .req-card {
+    display: flex; align-items: center; gap: 14px; padding: 14px;
+    background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); margin-bottom: 10px;
+  }
+  .req-card:last-child { margin-bottom: 0; }
+  .req-avatar {
+    width: 42px; height: 42px; border-radius: 50%;
+    background: rgba(124,93,232,0.15); color: #a78bfa;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 1rem; flex-shrink: 0;
+  }
+  .req-info { flex: 1; }
+  .req-info .req-name { font-weight: 600; font-size: 0.9rem; }
+  .req-info .req-meta { font-size: 0.78rem; color: var(--text-muted); margin-top: 2px; }
+  .req-actions { display: flex; gap: 8px; flex-shrink: 0; }
+  .appt-row {
+    display: flex; align-items: center; gap: 14px; padding: 14px;
+    background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); margin-bottom: 10px;
+  }
+  .appt-row:last-child { margin-bottom: 0; }
+  .appt-patient-avatar {
+    width: 42px; height: 42px; border-radius: 50%;
+    background: rgba(34,197,94,0.12); color: #4ade80;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 1rem; flex-shrink: 0;
+  }
+  .appt-info { flex: 1; }
+  .appt-info .appt-name { font-weight: 600; font-size: 0.9rem; }
+  .appt-info .appt-meta { font-size: 0.78rem; color: var(--text-muted); }
+</style>
+{% endblock %}
 
-    .custom-flash.danger {
-        background-color: #dc3545;
-    }
-    .custom-flash.info {
-        background-color: #17a2b8; 
-    }
+{% block nav_links %}
+<a href="/update_doctor"><i class="fas fa-user-edit"></i> My Profile</a>
+<a href="/contact_us"><i class="fas fa-envelope"></i> Contact</a>
+<a href="/" class="nav-logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+{% endblock %}
 
-    @keyframes fadeout {
-      0%   { opacity: 1; }
-      80%  { opacity: 1; }
-      100% { opacity: 0; transform: translateY(-20px); }
-    }
+{% block content %}
+{% for doctor in doctors %}
+<div class="dash-header">
+  <div class="dash-welcome">
+    <h2>Welcome, <span>Dr. {{ doctor.full_name }}</span> 👨‍⚕️</h2>
+    <p>{{ doctor.specialization }} &bull; ID: {{ doctor.doct_id }}</p>
+  </div>
+  <div class="dash-avatar">{{ doctor.full_name[0].upper() }}</div>
+</div>
+{% endfor %}
 
-    body {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        margin: 0;
-        padding: 0;
-        background-color: #f4f6f8;
-        color: #333;
-    }
+<div class="page-wrapper">
+  <div class="stat-grid">
+    <div class="stat-card">
+      <span class="stat-label">Pending Requests</span>
+      <span class="stat-val">{{ appointment_requests | length }}</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-label">Confirmed Appointments</span>
+      <span class="stat-val">{{ fixed_appointments | length }}</span>
+    </div>
+  </div>
 
-    nav {
-        background-color: #122e5e;
-        padding: 15px 20px;
-    }
-
-    nav a {
-        color: white;
-        text-decoration: none;
-        margin-left: 25px;
-        font-weight: 500;
-        transition: color 0.3s ease;
-    }
-
-    nav a:hover {
-        color: #f0db4f;
-    }
-
-    nav div {
-        max-width: 1200px;
-        margin: auto;
-        display: flex;
-        justify-content: flex-end;
-        align-items: center;
-    }
-
-    header {
-        background-color: #3657B5;
-        color: white;
-        padding: 30px 15px;
-        text-align: center;
-    }
-
-    .main-container {
-        display: flex;
-        justify-content: center;
-        gap: 30px;
-        padding: 40px 20px;
-        flex-wrap: wrap;
-        max-width: 1200px;
-        margin: auto;
-    }
-
-    .card {
-        width: 100%;
-        max-width: 500px;
-        background-color: white;
-        border-radius: 12px;
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-        padding: 25px 30px;
-        transition: transform 0.3s ease;
-    }
-
-    .card:hover {
-        transform: translateY(-5px);
-    }
-
-    h2 {
-        margin-top: 0;
-        margin-bottom: 15px;
-        font-size: 20px;
-        color: #3657B5;
-    }
-
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 10px;
-    }
-
-    th, td {
-        border: 1px solid #eee;
-        padding: 12px 10px;
-        font-size: 14px;
-    }
-
-    th {
-        background-color: #f0f0f0;
-        text-align: left;
-    }
-
-    td form {
-        display: inline;
-    }
-
-    button {
-        padding: 6px 12px;
-        background-color: #3498db;
-        border: none;
-        color: white;
-        cursor: pointer;
-        border-radius: 6px;
-        font-size: 14px;
-        transition: background-color 0.3s ease;
-    }
-
-    button:hover {
-        background-color: #2980b9;
-    }
-
-    button.reject {
-        background-color: #e74c3c;
-    }
-
-    button.reject:hover {
-        background-color: #c0392b;
-    }
-
-    </style>
-</head>
-<body>
-    {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-      <div id="flash-wrapper">
-        {% for category, message in messages %}
-          <div class="custom-flash {{ category }}">
-            {{ message }}
-          </div>
-        {% endfor %}
+  <div class="dash-grid">
+    <!-- Appointment Requests -->
+    <div class="glass-card">
+      <div class="card-title"><i class="fas fa-bell"></i> Pending Requests
+        {% if appointment_requests %}
+        <span class="badge badge-warning" style="margin-left:auto;">{{ appointment_requests | length }} new</span>
+        {% endif %}
       </div>
-    {% endif %}
-    {% endwith %}
-
-    <nav>
-        <div>
-            <a href="/update_doctor">Update Profile</a>
-            <a href="/">Home</a>
-            <a href="/contact_us">Contact Us</a>
+      {% if appointment_requests %}
+        {% for req in appointment_requests %}
+        <div class="req-card">
+          <div class="req-avatar">{{ req.patient.full_name[0].upper() }}</div>
+          <div class="req-info">
+            <div class="req-name">{{ req.patient.full_name }}</div>
+            <div class="req-meta">
+              <i class="fas fa-birthday-cake"></i> Age {{ req.patient.age }} &bull;
+              <i class="fas fa-calendar"></i> {{ req.appointment_date }}
+            </div>
+          </div>
+          <div class="req-actions">
+            <form method="POST" action="/approve_appointment/{{ req.id }}" style="display:inline;">
+              <button type="submit" class="btn btn-success btn-sm" title="Approve">
+                <i class="fas fa-check"></i>
+              </button>
+            </form>
+            <form method="POST" action="/reject_appointment/{{ req.id }}" style="display:inline;">
+              <button type="submit" class="btn btn-danger btn-sm" title="Reject">
+                <i class="fas fa-times"></i>
+              </button>
+            </form>
+          </div>
         </div>
-    </nav>
-
-    <header>
-        {% for doctor in doctors %}
-        <h1>Welcome Dr. {{ doctor.full_name }}</h1>
         {% endfor %}
-    </header>
-
-    <div class="main-container">
-
-        <div class="card">
-            <h2>Your Fixed Appointments</h2>
-            {% if fixed_appointments %}
-            <table>
-                <thead>
-                    <tr>
-                        <th>Patient Name</th>
-                        <th>Age</th>
-                        <th>Appointment Date</th>
-                        <th>Delete</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for appt in fixed_appointments %}
-                    <tr>
-                        <td>{{ appt.patient.full_name }}</td>
-                        <td>{{ appt.patient.age }}</td>
-                        <td>{{ appt.appointment_date }}</td>
-                        <td>
-                            <form method="POST" action="/delete_appointment/{{ appt.id }}">
-                                <button type="submit" class="reject">Delete</button>
-                            </form>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-            {% else %}
-            <p>No fixed appointments yet.</p>
-            {% endif %}
+      {% else %}
+        <div class="empty-state">
+          <i class="fas fa-inbox"></i>
+          <p>No pending appointment requests.</p>
         </div>
-
-        <div class="card">
-            <h2>Appointment Requests for You</h2>
-            {% if appointment_requests %}
-            <table>
-                <thead>
-                    <tr>
-                        <th>Patient Name</th>
-                        <th>Age</th>
-                        <th>Date Requested</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for req in appointment_requests %}
-                    <tr>
-                        <td>{{ req.patient.full_name }}</td>
-                        <td>{{ req.patient.age }}</td>
-                        <td>{{ req.appointment_date }}</td>
-                        <td>
-                            <form method="POST" action="/approve_appointment/{{ req.id }}">
-                                <button type="submit">Approve</button>
-                            </form>
-                            <form method="POST" action="/reject_appointment/{{ req.id }}">
-                                <button type="submit" class="reject">Reject</button>
-                            </form>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-            {% else %}
-            <p>No new appointment requests.</p>
-            {% endif %}
-        </div>
-
+      {% endif %}
     </div>
 
-</body>
-</html>
+    <!-- Confirmed Appointments -->
+    <div class="glass-card">
+      <div class="card-title"><i class="fas fa-calendar-check"></i> Confirmed Appointments</div>
+      {% if fixed_appointments %}
+        {% for appt in fixed_appointments %}
+        <div class="appt-row">
+          <div class="appt-patient-avatar">{{ appt.patient.full_name[0].upper() }}</div>
+          <div class="appt-info">
+            <div class="appt-name">{{ appt.patient.full_name }}</div>
+            <div class="appt-meta">
+              <i class="fas fa-birthday-cake"></i> Age {{ appt.patient.age }} &bull;
+              <i class="fas fa-calendar-alt"></i> {{ appt.appointment_date }}
+            </div>
+          </div>
+          <div style="display:flex; flex-direction:column; align-items:flex-end; gap:6px;">
+            <span class="badge badge-success">Confirmed</span>
+            <form method="POST" action="/delete_appointment/{{ appt.id }}">
+              <button type="submit" class="btn btn-danger btn-sm" title="Cancel" onclick="return confirm('Cancel this appointment?')">
+                <i class="fas fa-trash-alt"></i>
+              </button>
+            </form>
+          </div>
+        </div>
+        {% endfor %}
+      {% else %}
+        <div class="empty-state">
+          <i class="fas fa-calendar-times"></i>
+          <p>No confirmed appointments yet.</p>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

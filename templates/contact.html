@@ -1,81 +1,102 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Contact Us - Hospital Info</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f9f9f9;
-        }
+{% extends "base.html" %}
+{% block title %}Contact Us{% endblock %}
 
-        .contact-header {
-            background-color: #122e5e;
-            color: white;
-            text-align: center;
-            padding: 40px 20px;
-        }
+{% block extra_head %}
+<style>
+  .contact-wrapper {
+    max-width: 900px; margin: 0 auto; padding: 60px 24px;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 32px;
+    align-items: start;
+  }
+  @media (max-width: 700px) { .contact-wrapper { grid-template-columns: 1fr; } }
+  .contact-info { padding: 16px 0; }
+  .contact-info h1 { font-size: 2rem; font-weight: 800; margin-bottom: 12px; }
+  .contact-info h1 span { background: var(--accent-grad); -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent; background-clip: text; }
+  .contact-info p { color: var(--text-muted); line-height: 1.7; margin-bottom: 28px; }
+  .contact-item { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; }
+  .contact-item-icon {
+    width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0;
+    background: rgba(79,142,247,0.12); color: #60a5fa;
+    display: flex; align-items: center; justify-content: center; font-size: 1rem;
+  }
+  .contact-item-text h4 { font-size: 0.85rem; font-weight: 600; margin-bottom: 2px; }
+  .contact-item-text p  { font-size: 0.8rem; color: var(--text-muted); margin: 0; }
+  .auth-card {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: var(--radius); backdrop-filter: blur(16px);
+    box-shadow: var(--shadow); padding: 36px;
+  }
+  .auth-card h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 24px; }
+  .input-icon-wrap { position: relative; }
+  .input-icon-wrap i { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 0.9rem; }
+  .input-icon-wrap .form-control { padding-left: 40px; }
+  .input-icon-wrap.textarea-wrap i { top: 16px; transform: none; }
+</style>
+{% endblock %}
 
-        .contact-container {
-            max-width: 900px;
-            margin: 40px auto;
-            padding: 20px;
-            background: white;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            border-radius: 12px;
-        }
+{% block nav_links %}
+<a href="/"><i class="fas fa-home"></i> Home</a>
+{% endblock %}
 
-        .contact-info {
-            margin-bottom: 30px;
-        }
-
-        .contact-info h3 {
-            color: #122e5e;
-            margin-bottom: 10px;
-        }
-
-        .contact-info p {
-            line-height: 1.6;
-        }
-
-        .map-container {
-            margin-top: 20px;
-            text-align: center;
-        }
-
-        iframe {
-            width: 100%;
-            height: 300px;
-            border: none;
-            border-radius: 8px;
-        }
-    </style>
-</head>
-<body>
-
-<div class="contact-header">
-    <h1>Contact Us</h1>
-    <p>Get in touch with our admin or visit our hospital</p>
-</div>
-
-<div class="contact-container">
-    <div class="contact-info">
-        <h3>Admin Contact</h3>
-        <p><strong>Email:</strong> admin@hospitaldomain.com<br>
-           <strong>Phone:</strong> +91 90000 90000</p>
+{% block content %}
+<div class="contact-wrapper">
+  <div class="contact-info">
+    <h1>Get in <span>Touch</span></h1>
+    <p>Have questions about appointments, accounts, or the platform? We're here to help you every step of the way.</p>
+    <div class="contact-item">
+      <div class="contact-item-icon"><i class="fas fa-envelope"></i></div>
+      <div class="contact-item-text"><h4>Email Support</h4><p>support@medibook.health</p></div>
     </div>
-
-    <div class="contact-info">
-        <h3>Hospital Address</h3>
-        <p>City Hospital<br>
-        123, Health Street,<br>
-        Wellness Nagar, Chennai, Tamil Nadu - 600001<br>
-        India</p>
+    <div class="contact-item">
+      <div class="contact-item-icon"><i class="fas fa-phone-alt"></i></div>
+      <div class="contact-item-text"><h4>Helpline</h4><p>+91 1800-MED-BOOK (Mon–Sat 9am–6pm)</p></div>
     </div>
+    <div class="contact-item">
+      <div class="contact-item-icon"><i class="fas fa-map-marker-alt"></i></div>
+      <div class="contact-item-text"><h4>Head Office</h4><p>MediBook HQ, Healthcare Block, Chennai, India</p></div>
+    </div>
+    <div class="contact-item">
+      <div class="contact-item-icon"><i class="fas fa-clock"></i></div>
+      <div class="contact-item-text"><h4>Working Hours</h4><p>Mon–Sat: 9:00 AM – 6:00 PM</p></div>
+    </div>
+  </div>
 
+  <div class="auth-card">
+    <h2><i class="fas fa-paper-plane" style="color:#60a5fa;margin-right:8px;"></i>Send a Message</h2>
+    <form>
+      <div class="form-group">
+        <label class="form-label">Your Name</label>
+        <div class="input-icon-wrap">
+          <i class="fas fa-user"></i>
+          <input type="text" class="form-control" placeholder="Full name">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email Address</label>
+        <div class="input-icon-wrap">
+          <i class="fas fa-envelope"></i>
+          <input type="email" class="form-control" placeholder="you@example.com">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Subject</label>
+        <div class="input-icon-wrap">
+          <i class="fas fa-tag"></i>
+          <input type="text" class="form-control" placeholder="How can we help?">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Message</label>
+        <div class="input-icon-wrap textarea-wrap">
+          <i class="fas fa-comment"></i>
+          <textarea class="form-control" style="padding-left:40px;" rows="4" placeholder="Describe your issue or question..."></textarea>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary btn-full">
+        <i class="fas fa-paper-plane"></i> Send Message
+      </button>
+    </form>
+  </div>
 </div>
-
-</body>
-</html>
+{% endblock %}

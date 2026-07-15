@@ -1,195 +1,146 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Hospital Appointment System</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-  <style>
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
 
-  #flash-wrapper {
-    position: fixed;
-    top: 20px;
-    left: 0;
-    width: 100%;
-    z-index: 1050;
+{% block extra_head %}
+<style>
+  body {
+    background-image:
+      radial-gradient(ellipse at 20% 10%, rgba(79,142,247,0.15) 0%, transparent 55%),
+      radial-gradient(ellipse at 80% 80%, rgba(124,93,232,0.15) 0%, transparent 55%);
+  }
+  .hero {
     text-align: center;
-    pointer-events: none;
+    padding: 80px 24px 60px;
+    max-width: 800px;
+    margin: 0 auto;
   }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(79,142,247,0.12); border: 1px solid rgba(79,142,247,0.25);
+    color: #93c5fd; padding: 6px 18px; border-radius: 50px;
+    font-size: 0.78rem; font-weight: 600; letter-spacing: 0.05em;
+    text-transform: uppercase; margin-bottom: 28px;
+  }
+  .hero h1 {
+    font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 800;
+    line-height: 1.15; margin-bottom: 20px;
+  }
+  .hero h1 .gradient-text {
+    background: linear-gradient(135deg, #4f8ef7, #a78bfa);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .hero p {
+    font-size: 1.05rem; color: var(--text-muted); max-width: 560px;
+    margin: 0 auto 48px; line-height: 1.7;
+  }
+  .portal-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 24px 60px;
+  }
+  .portal-card {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: var(--radius); backdrop-filter: blur(12px);
+    padding: 32px 28px; text-align: center;
+    transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+  }
+  .portal-card:hover { transform: translateY(-6px); box-shadow: 0 20px 48px rgba(0,0,0,0.5); }
+  .portal-card.patient-card:hover { border-color: rgba(79,142,247,0.4); }
+  .portal-card.doctor-card:hover  { border-color: rgba(124,93,232,0.4); }
+  .portal-card.admin-card:hover   { border-color: rgba(34,197,94,0.4); }
+  .portal-icon {
+    width: 72px; height: 72px; border-radius: 20px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.8rem; margin: 0 auto 20px;
+  }
+  .patient-icon { background: rgba(79,142,247,0.15); color: #60a5fa; }
+  .doctor-icon  { background: rgba(124,93,232,0.15); color: #a78bfa; }
+  .admin-icon   { background: rgba(34,197,94,0.15);  color: #4ade80; }
+  .portal-card h3 { font-size: 1.2rem; font-weight: 700; margin-bottom: 10px; }
+  .portal-card p  { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 24px; line-height: 1.6; }
+  .portal-btn-group { display: flex; flex-direction: column; gap: 10px; }
+  .features-strip {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 20px; max-width: 960px; margin: 0 auto 64px; padding: 0 24px;
+  }
+  .feature-item {
+    display: flex; align-items: flex-start; gap: 14px;
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 20px;
+  }
+  .feature-item i { font-size: 1.3rem; margin-top: 2px; }
+  .feature-item h4 { font-size: 0.9rem; font-weight: 600; margin-bottom: 4px; }
+  .feature-item p  { font-size: 0.78rem; color: var(--text-muted); line-height: 1.5; }
+  .fi-blue  i { color: #60a5fa; }
+  .fi-purple i { color: #a78bfa; }
+  .fi-green  i { color: #4ade80; }
+  .fi-amber  i { color: #fbbf24; }
+</style>
+{% endblock %}
 
-  .custom-flash {
-    display: inline-block;
-    margin: 10px auto;
-    padding: 12px 24px;
-    border-radius: 6px;
-    font-weight: bold;
-    color: white;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-    animation: fadeout 4s forwards;
-    pointer-events: auto;
-  }
-  
-  .custom-flash.success {
-    background-color: #28a745; 
-  }
-  
-  .custom-flash.danger {
-    background-color: #dc3545; 
-  }
-  
-  .custom-flash.info {
-    background-color: #17a2b8;
-  }
-  
-  @keyframes fadeout {
-    0%   { opacity: 1; }
-    80%  { opacity: 1; }
-    100% { opacity: 0; transform: translateY(-20px); }
-  }
+{% block nav_links %}
+<a href="/logpat"><i class="fas fa-user"></i> Patient Login</a>
+<a href="/logdoc"><i class="fas fa-user-md"></i> Doctor Login</a>
+<a href="/logadmin"><i class="fas fa-user-shield"></i> Admin</a>
+{% endblock %}
 
-  body, html {
-    height: 100%;
-    margin: 0;
-    font-family: 'Segoe UI', sans-serif;
-    background: linear-gradient(rgba(255,255,255,0.95), rgba(255,255,255,0.46)),
-    url('https://images.pexels.com/photos/40568/medical-appointment-doctor-healthcare-40568.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=1080&w=1920') no-repeat center center/cover;
-  }
-  
-  .navbar {
-    background-color: #4169E1;
-  }
+{% block content %}
+<section class="hero">
+  <div class="hero-badge"><i class="fas fa-shield-heart"></i> Trusted Healthcare Platform</div>
+  <h1>Your Health, <span class="gradient-text">Our Priority</span></h1>
+  <p>Book appointments with top specialists, manage your health journey, and connect with trusted doctors — all in one seamless platform.</p>
+</section>
 
-  .navbar-brand {
-    color: #fff;
-    font-weight: bold;
-    font-size: 1.5rem;
-    text-align: center;
-    width: 100%;
-  }
+<div class="features-strip">
+  <div class="feature-item fi-blue">
+    <i class="fas fa-calendar-check"></i>
+    <div><h4>Easy Scheduling</h4><p>Book, view, and manage appointments instantly</p></div>
+  </div>
+  <div class="feature-item fi-purple">
+    <i class="fas fa-user-md"></i>
+    <div><h4>Top Specialists</h4><p>Choose from verified, board-approved doctors</p></div>
+  </div>
+  <div class="feature-item fi-green">
+    <i class="fas fa-shield-alt"></i>
+    <div><h4>Secure & Private</h4><p>Your health data stays protected and confidential</p></div>
+  </div>
+  <div class="feature-item fi-amber">
+    <i class="fas fa-bolt"></i>
+    <div><h4>Instant Updates</h4><p>Real-time status updates on all your requests</p></div>
+  </div>
+</div>
 
-  .main-section {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    min-height: 90vh;
-    padding-top: 40px;
-  }
-  .card-custom {
-    border: none;
-    border-radius: 16px;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    background-color: #ffffff;
-  }
-
-  .card-custom:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-  }
-
-  .card-custom h2 {
-    color: #4169E1;
-    margin-bottom: 20px;
-    text-align: center;
-  }
-
-  .btn-custom {
-    background-color: #4169E1;
-    color: white;
-    border-radius: 30px;
-    padding: 12px 20px;
-    font-size: 1rem;
-    margin-bottom: 10px;
-    width: 100%;
-    transition: background-color 0.3s ease;
-  }
-
-  .btn-custom:hover {
-    background-color: #3657B5;
-  }
-
-  .admin-btn-wrapper {
-    text-align: center;
-    margin-top: 40px;
-  }
-
-  .btn-admin {
-    background-color: #28a745;
-    border-radius: 30px;
-    color: white;
-    padding: 12px 30px;
-    font-size: 1rem;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-  }
-
-  .btn-admin:hover {
-    background-color: #1e7e34;
-  }
-
-  @media (max-width: 768px) {
-    .main-section {
-      padding: 20px 0;
-    }
-    .btn-admin {
-      width: 80%;
-    }
-  }
-
-  </style>
-</head>
-<body>
-  {% with messages = get_flashed_messages(with_categories=true) %}
-  {% if messages %}
-    <div id="flash-wrapper">
-      {% for category, message in messages %}
-        <div class="custom-flash {{ category }}">
-          {{ message }}
-        </div>
-      {% endfor %}
-    </div>
-  {% endif %}
-  {% endwith %}
-
-  <nav class="navbar navbar-expand-lg">
-    <div class="container">
-      <a class="navbar-brand" href="#">Hospital Appointment System</a>
-    </div>
-  </nav>
-
-  <div class="container main-section">
-    <div class="row justify-content-center">
-      <div class="col-md-5 col-sm-10 mb-4">
-        <div class="card card-custom p-4 text-center">
-          <h2><i class="fas fa-user-plus me-2"></i>New Users</h2>
-          <form action="/regpat" method="get">
-            <button type="submit" class="btn btn-custom"><i class="fas fa-user-injured me-2"></i>Register as Patient</button>
-          </form>
-          <form action="/regdoc" method="get">
-            <button type="submit" class="btn btn-custom"><i class="fas fa-user-md me-2"></i>Register as Doctor</button>
-          </form>
-        </div>
-      </div>
-
-      <div class="col-md-5 col-sm-10 mb-4">
-        <div class="card card-custom p-4 text-center">
-          <h2><i class="fas fa-sign-in-alt me-2"></i>Registered Users</h2>
-          <form action="/logpat" method="GET">
-            <button type="submit" class="btn btn-custom"><i class="fas fa-user me-2"></i>Login as Patient</button>
-          </form>
-          <form action="/logdoc" method="GET">
-            <button type="submit" class="btn btn-custom"><i class="fas fa-user-md me-2"></i>Login as Doctor</button>
-          </form>
-        </div>
-      </div>
-    </div>
-
-    <div class="admin-btn-wrapper">
-      <form action="/logadmin" method="GET">
-        <button type="submit" class="btn btn-admin"><i class="fas fa-user-shield me-2"></i>Login as Admin</button>
-      </form>
+<div class="portal-grid">
+  <div class="portal-card patient-card">
+    <div class="portal-icon patient-icon"><i class="fas fa-user-injured"></i></div>
+    <h3>Patient Portal</h3>
+    <p>Register to book appointments, track your scheduled visits, and manage your healthcare profile.</p>
+    <div class="portal-btn-group">
+      <a href="/logpat" class="btn btn-primary btn-full"><i class="fas fa-sign-in-alt"></i> Login as Patient</a>
+      <a href="/regpat" class="btn btn-ghost btn-full"><i class="fas fa-user-plus"></i> Register as Patient</a>
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+  <div class="portal-card doctor-card">
+    <div class="portal-icon doctor-icon"><i class="fas fa-stethoscope"></i></div>
+    <h3>Doctor Portal</h3>
+    <p>Join our platform, manage appointment requests, and provide exceptional care to your patients.</p>
+    <div class="portal-btn-group">
+      <a href="/logdoc" class="btn btn-full" style="background:linear-gradient(135deg,#7c5de8,#a78bfa);color:white;box-shadow:0 4px 16px rgba(124,93,232,0.35);"><i class="fas fa-sign-in-alt"></i> Login as Doctor</a>
+      <a href="/regdoc" class="btn btn-ghost btn-full"><i class="fas fa-user-plus"></i> Register as Doctor</a>
+    </div>
+  </div>
+
+  <div class="portal-card admin-card">
+    <div class="portal-icon admin-icon"><i class="fas fa-user-shield"></i></div>
+    <h3>Admin Panel</h3>
+    <p>Approve registrations, manage platform users, and oversee the entire appointment system.</p>
+    <div class="portal-btn-group">
+      <a href="/logadmin" class="btn btn-success btn-full"><i class="fas fa-lock"></i> Admin Login</a>
+    </div>
+  </div>
+</div>
+{% endblock %}
